@@ -70,7 +70,6 @@ app.use(passport.session());
 // Imports all of the routes from ./routes/index.js
 app.use(routes);
 
-
 /**
  * -------------- SERVER ----------------
  */

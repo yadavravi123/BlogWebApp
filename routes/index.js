@@ -1,12 +1,16 @@
 const router = require('express').Router();
 const passport = require('passport');
 const genPassword = require('../lib/passwordUtils').genPassword;
-const connection = require('../config/database');
+const connection = require('../config/database')
 const User = connection.models.User;
 const posts=connection.models.posts;
+const chats=connection.models.chats;
 const isAuth=require('./authMiddleware').isAuth;
 const isAdmin=require('./authMiddleware').isAdmin;
 const axios=require("axios");
+const { application } = require('express');
+const { connect } = require('mongoose');
+
 /**
  * -------------- POST ROUTES ----------------
  */
@@ -18,7 +22,7 @@ const axios=require("axios");
   }),(req,res,next)=>{
     console.log(req.user);
   });
-  router.post('/')
+
  // TODO
  router.post('/register', (req, res, next) => {
     const saltHash=genPassword(req.body.password);
@@ -62,40 +66,50 @@ const axios=require("axios");
  * -------------- GET ROUTES ----------------
  */
 
-router.get('/', (req, res, next) => {
+router.get('/', async(req, res, next) => {
+
     res.send('<h1>Home</h1><p>Please <a href="/register">register</a> ,<a href="/register-admin">register as admin</a>,<a href="/login">login</a> </p>');
+   
+    
+
 });
 
 // When you visit http://localhost:3000/login, you will see "Login Page"
-router.get('/login', (req, res, next) => {
+router.get('/login',  (req, res, next) => {
    
-    const form = '<h1>Login Page</h1><form method="POST" action="/login">\
-    Enter Username:<br><input type="text" name="username">\
-    <br>Enter Password:<br><input type="password" name="password">\
-    <br><br><input type="submit" value="Submit"></form>';
-
-    res.send(form);
-
+    // const form = '<h1>Login Page</h1><form method="POST" action="/login">\
+    // Enter Username:<br><input type="text" name="username">\
+    // <br>Enter Password:<br><input type="password" name="password">\
+    // <br><br><input type="submit" value="Submit"></form> <a href="/register">register</a>';
+    // res.send(form);
+    res.render("register_login.ejs",{
+        type:"login"
+    });
 });
 
 // When you visit http://localhost:3000/register, you will see "Register Page"
 router.get('/register', (req, res, next) => {
 
-    const form = '<h1>Register Page</h1><form method="post" action="register">\
-                    Enter Username:<br><input type="text" name="username">\
-                    <br>Enter Password:<br><input type="password" name="password">\
-                    <br><br><input type="submit" value="Submit"></form>';
+    // const form = '<h1>Register Page</h1><form method="post" action="register">\
+    //                 Enter Username:<br><input type="text" name="username">\
+    //                 <br>Enter Password:<br><input type="password" name="password">\
+    //                 <br><br><input type="submit" value="Submit"></form>';
 
-    res.send(form);
+    // res.send(form);
+    res.render("register_login.ejs",{
+        type:"register"
+    });
 
 });
 router.get("/register-admin",(req,res,next)=>{
-    const form = '<h1>Register Page</h1><form method="post" action="register-admin">\
-    Enter Username:<br><input type="text" name="username">\
-    <br>Enter Password:<br><input type="password" name="password">\
-    <br><br><input type="submit" value="Submit"></form>';
-
-res.send(form);
+//     const form = '<h1>Register Page</h1><form method="post" action="register-admin">\
+//     Enter Username:<br><input type="text" name="username">\
+//     <br>Enter Password:<br><input type="password" name="password">\
+//     <br><br><input type="submit" value="Submit"></form>';
+// res.send(form);
+    res.render("register_login.ejs",{
+        type:"register-admin"
+    })
 })
 /**
  * Lookup how to authenticate users on routes with Local Strategy
@@ -135,6 +149,7 @@ router.get('/login-failure', (req, res, next) => {
 // --------------------Blog Routes--------------------------------------
 
 // get posts
+
 router.get('/posts',isAuth,async(req,res,next)=>{
     try{
         // show only if user is authenticated
@@ -210,6 +225,160 @@ router.post('/api/posts/:id',isAuth,async(req,res)=>{
         console.log(`error while updating the post`);
     }
 })
+// ---------------------------chat routes----------------------
 
+router.post("/send-request",isAuth, async(req,res)=>{
+    // console.log(req.body.username);
+    // console.log(req.user);
+    await User.findOne({username:req.body.username})
+    .then((user)=>{
+        if(!user){
+            console.log(`user doesn't exist`);
+        }else{
+            const USER_ID=user._id;
+            // console.log(req.user);
+            User.updateOne({_id:req.user._id},{$push:{"sent_req":{"id":user._id,"username":user.username}}})
+             .then((ack)=>{
+                console.log(ack);
+             })
+             .catch((err)=>{
+                console.log(err);
+             })
+             User.updateOne({_id:user._id},{$push:{"pending_req":{"id":req.user._id,"username":req.user.username}}})
+             .then((ack)=>{
+                console.log(ack);
+             })
+             .catch((err)=>{
+                console.log(err);
+             })
+             
+        }
+        res.redirect("/posts");
+    })
+    .catch((err)=>{
+        console.log(`error while sending request`);
+    })
+})
+router.get("/sent-requests",isAuth, async(req,res)=>{
+    User.findOne({_id:req.user._id})
+    .then((user)=>{
+        res.render("requests.ejs",{
+            type:"sent-requests",
+            users:user.sent_req,
+        })
+    })
+})
+router.get("/pending-requests",isAuth,async(req,res)=>{
+    User.findOne({_id:req.user._id})
+    .then((user)=>{
+        res.render("requests.ejs",{
+            type:"pending-requests",
+            users:user.pending_req,
+        })
+    })
+})
+
+
+router.get("/accept-request/:id",isAuth, async(req,res)=>{
+
+    User.findOne({_id:req.params.id})
+    .then((user)=>{
+
+       User.updateOne({_id:req.user._id},{$push:{"friends":{"id":user._id,"username":user.username}}})
+       .then((ack)=>{
+        console.log(ack);
+       })
+ 
+       User.updateOne({_id:req.user._id},{$pull:{"pending_req":{"id":user._id,"username":user.username}}})
+       .then((ack)=>{
+        console.log(ack);
+       })
+
+       User.updateOne({_id:user._id},{$push:{"friends":{"id":req.user._id,"username":req.user.username}}})
+       .then((ack)=>{
+        console.log(ack);
+       })
+       User.updateOne({_id:user._id},{$pull:{"sent_req":{"id":req.user._id,"username":req.user.username}}})
+       .then((ack)=>{
+        console.log(ack);
+       })
+    })
+    res.redirect("/posts");
+})
+router.get("/friends",isAuth,async(req,res)=>{
+        res.render("requests.ejs",{
+            type:"friends",
+            users:req.user.friends,
+        })
+})
+
+router.get("/chats",isAuth, async(req,res)=>{
+
+    // show old chats and then input field
+    res.render("requests.ejs",{
+        type:"friends",
+        users:req.user.friends,
+        chat:"yes",
+    })
+})
+
+// post route to send chat 
+router.post("/send-chat/:id",isAuth,async(req,res)=>{
+    console.log(req.body.chat_content);
+    let id1=req.params.id, id2=req.user._id;
+    let temp;
+    if(id1>id2){
+        temp=id1;
+        id1=id2;
+        id2=temp;
+    }// id1 will contain lexicographically smaller id
+  
+    User.findOne({_id:id1})
+    .then((user1)=>{
+        User.findOne({_id:id2})
+        .then((user2)=>{
+            const filter={
+                "user1":{"username":user1.username,_id:user1._id},
+                "user2":{"username":user2.username,_id:user2._id},
+            };
+            const sender={
+                "username":req.user.username,
+                _id:req.user.id,
+            };
+            let d=new Date();
+            const datetime=d.toLocaleDateString()+' , '+d.toLocaleTimeString();
+            chats.updateOne(filter,{$push:{"messages":{"sender":sender,"content":req.body.chat_content,"time":datetime}}},{upsert:true})
+            .then((ack)=>{
+                console.log(ack);
+            })
+            .catch((err)=>{
+                console.log(`error while updating chats`);
+            })
+
+        })
+    })
+    res.redirect(`/chats/${req.params.id}`);
+   
+
+})
+//
+router.get("/chats/:id",isAuth,async(req,res)=>{
+        let id1=req.params.id,id2=req.user._id;
+        if(id1>id2){
+            let temp=id1;
+            id1=id2;
+            id2=temp;
+        }
+        const user1= await User.findOne({_id:id1});
+        const user2= await User.findOne({_id:id2});
+       
+        const u1={"user1":{"username":user1.username,_id:user1._id}};
+        const u2={"user2":{"username":user2.username,_id:user2._id}};
+        let Chats=await chats.findOne({$and:[u1,u2]});
+        if(Chats){
+            Chats=Chats.messages;
+        }
+        res.render("chat_page.ejs",{id:req.params.id,Chats:Chats});
+})
 
 module.exports = router;

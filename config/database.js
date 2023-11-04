@@ -21,6 +21,7 @@ const connection = mongoose.createConnection(conn, {
 });
 
 // Creates simple schema for a User.  The hash and salt are derived from the user's given password when they register
+const ObjectId=mongoose.Schema.ObjectId;
 const UserSchema = new mongoose.Schema({
     username: {
         type:String,
@@ -28,7 +29,10 @@ const UserSchema = new mongoose.Schema({
     },
     hash: String,
     salt: String,
-    admin:Boolean
+    admin:Boolean,
+    friends:[{id:ObjectId,username:String}],
+    sent_req:[{id:ObjectId,username:String}],
+    pending_req:[{id:ObjectId,username:String}],
 });
 const PostSchma=new mongoose.Schema({
     title:String,
@@ -36,8 +40,17 @@ const PostSchma=new mongoose.Schema({
     author:String,
     date:Date,
 });
-
+const ChatSchema=new mongoose.Schema({
+   user1:{ username:String,_id:ObjectId},
+   user2:{ username:String,_id:ObjectId},
+   messages:[{
+        sender:{username:String,_id:ObjectId},
+        content:String,
+        time: String,
+   }]
+})
 const User = connection.model('User', UserSchema);
 const posts=connection.model('posts',PostSchma);
+const chats=connection.model('chats',ChatSchema);
 // Expose the connection
-module.exports = connection;
+module.exports = connection

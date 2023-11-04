@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>requests</title>
+    <!-- <link rel="stylesheet" href="/styles/main.css"> -->
+</head>
+<body>
+    
+    <% if (type==="sent-requests"){ %>
+        <h1>Sent Requests</h1>
+        <%for(let i=0;i<users.length;i++){%>
+            &#x2022 <%=users[i].username%> <br>
+        <%}%>
+   <% }else{%>
+        <%if(type==="pending-requests"){%>
+        <h1>Pending Requests</h1>
+
+        <%for(let i=0;i<users.length;i++){%>
+            &#x2022 <%=users[i].username%> <a href="/accept-request/<%=users[i].id%>">Accept</a> <br>
+         <%}%>
+
+        <% }else{%>
+           <% if(locals.chat){%>
+                <h1>Chat with friends</h1>
+           <% }else{%>
+                <h1>Friends</h1>
+            <%}%>
+            
+            <%for(let i=0;i<users.length;i++){%>
+                &#x2022 <%=users[i].username%> <a href="/chats/<%=users[i].id%>">Chat</a> <br>
+            <%}%>
+       <% }%>
+          <%  }%>
+          <br>
+          <a href="/posts">Home</a>
+
+</body>
+</html>

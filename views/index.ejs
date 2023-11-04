@@ -11,9 +11,17 @@
 
 <body>
   <div class="container">
-    <h1>My Blog</h1>
+    <h1>Posts</h1>
+    <form action="/send-request" method="post">
+        <input type="text" name="username" placeholder="enter username" id="">
+        <input type="submit" value="send request">
+    </form>
     <p style="text-align: right; color:#900C3F; font-weight:bold; font-size: large; font-family:Verdana, Geneva, Tahoma, sans-serif; margin: 0;">user:<%=username%></p>
     <a id="newPostBtn" href="/new">New Post</a>
+    <a id="newPostBtn" href="/chats" style="background-color: #1AACAC;">Chats</a>
+    <a id="newPostBtn" href="/friends" style="background-color: #5D12D2;">Friends</a>
+    <a id="newPostBtn" href="/sent-requests" style="background-color: #FFA33C;">Sent Requests</a>
+    <a id="newPostBtn" href="/pending-requests" style="background-color: #FF4B91;">Pending Requests</a>
     <a id="logoutBtn" href="/logout">logout</a>
     <ul id="postsList">
       <% posts.forEach(post=> { %>

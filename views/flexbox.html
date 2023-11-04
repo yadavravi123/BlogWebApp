@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flexbox</title>
+    <style>
+        .container{
+            display: flex;
+            flex-direction: row;
+            background-color:chartreuse  ;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            /* align-items: flex-start; */
+            align-content: space-around;
+            height: 200px;
+        }
+        .item{
+            /* width: 200px; */
+            flex-basis: 200px;
+            height: 50px;
+
+        }
+        #item1{
+           
+        }
+        
+    </style>
+</head>
+<body>
+   
+    <div class="container">
+        <div id="item1" class="item"  style="background-color: red;">child1</div>
+        <div id="item2" style="background-color: blue;" class="item">child2</div>
+        <div id="item3" style="background-color: yellow;" class="item">child3</div>
+        <div id="item4" style="background-color: orange;" class="item">child4</div>
+        <div id="item4" style="background-color: orange;" class="item">child4</div>
+        <div id="item4" style="background-color: orange;" class="item">child4</div>
+        <div id="item4" style="background-color: orange;" class="item">child4</div>
+        <div id="item4" style="background-color: orange;" class="item">child4</div>
+        <div id="item4" style="background-color: orange;" class="item">child4</div>
+    </div>
+</body>
+</html>

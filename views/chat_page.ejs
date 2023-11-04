@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+
+        .container{
+            background-color: #D2E0FB;
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content:flex-end;
+            padding: 2rem;
+            margin: 1rem 5rem;
+        }
+        .item{
+            margin:0 1rem;
+            /* background-color: green; */
+            align-self: flex-end;
+        }
+        .chats{
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            margin:0.5rem 1rem;
+        }
+        button{
+        border: none;
+        padding:10px 40px;
+        color: #fff;
+        border-radius: 4%;
+        background-color: blue;
+        font-size: 1em;
+        }
+        button:hover{
+            background-color: black;
+        }
+        .sendBtn{
+            align-self: center;
+        }
+        nav{
+            /* background-color: yellow; */
+            margin:0 5rem;
+        }
+        textarea{
+            padding:0.3rem;
+        }
+    </style>
+     <!-- <link rel="stylesheet" href="/styles/main.css">     -->
+</head>
+<body>
+    <!-- <h1 style="text-align: center;">Chats</h1> -->
+
+        <h1 style="text-align: center;">Chat</h1>
+    <nav> <a href="/posts">Home</a> </nav>
+    <div class="container">
+     
+      <%  if(locals.Chats){ %>
+        <div class="chats">
+           <%for(let i=0;i<Chats.length;i++){%>
+                <%=Chats[i].time%> <br>
+                <%=Chats[i].sender.username%> : <%=Chats[i].content%> <br>
+           <% } %>
+        </div>
+    <%}%>
+        <div class="item">
+    <form id="chat-form" action="/send-chat/<%=id%>" method="post">
+        <textarea name="chat_content" placeholder="type your messages here......."  rows="6" cols="132"></textarea> <br>
+        <div class="">
+          <button class="full-width" type="submit">send</button>
+        </div>
+    </form>
+    </div>
+    </div>
+</body>
+</html>
