@@ -5,21 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>requests</title>
     <!-- <link rel="stylesheet" href="/styles/main.css"> -->
+
+    <style>
+        h1{
+            text-align: center;
+        }
+        body{
+            background-color: #E0F4FF;
+        }
+        .parent-container{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            /* background-color: yellow; */
+            /* background-color:#C2D9FF; */
+        }
+        .container{
+            /* background-color: black; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem;
+            /* width:4rem; */
+        }
+        .item{
+            margin: 0.4rem 0;
+            background-color: white;
+            padding: 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            width: 20rem;
+            border-radius: 10px;
+        }
+        .inner-item{
+            /* margin:0 1rem;
+            padding:0.4rem; */
+            padding:0.4rem 1rem;
+            /* background-color: aqua; */
+            font-size: large;
+        }
+        #username{
+           
+        }
+        #accept{
+                background-color: blue;
+               border-radius: 6px;
+        }
+        #accept:hover{
+            background-color: black;
+        }
+        #accept a{
+            color: white;
+            text-decoration: none;
+        }
+        #delete{
+            background-color:  #E7E6DD;
+            border-radius: 6px;
+        }
+        #delete:hover{
+            opacity: 0.6;
+        }
+        #delete a{
+            color:black;
+            text-decoration: none;
+        }
+        .item-send{
+            display: flex;
+            flex-direction: row;
+            background-color: white;
+            margin: 1rem 0;
+            padding: 1rem 1rem;
+            border-radius: 10px;
+            justify-content: space-between;
+            /* justify-content:spcey; */
+        }
+        .inner2-item{
+            display: flex;
+            flex-direction: row;
+            justify-content:space-between;  
+            /* background-color: yellow; */
+            /* padding:0 1rem; */
+        }
+        .inner-item-send{
+            /* margin:1rem 0; */
+            font-size: large;
+           margin:0 2rem;
+
+            /* background-color: yellow; */
+        }
+        .inner-item-send1{
+            /* background-color: yellow; */
+            padding:0.6rem 1.4rem;
+        }
+        .inner-item-send2{
+            background-color: black;
+            padding:0.6rem 1.4rem;
+        }
+        .inner-item-send2:hover{
+            opacity: 0.7;
+        }
+        .inner-item-send2 a{
+            color:white;
+            text-decoration: none;
+
+        }
+        .container-send{
+            /* background-color: black; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding:2rem;
+            justify-content: space-between;
+            /* padding: 2rem;   */
+            /* width:4rem; */
+        }
+
+
+        
+    </style>
 </head>
 <body>
     
     <% if (type==="sent-requests"){ %>
         <h1>Sent Requests</h1>
-        <%for(let i=0;i<users.length;i++){%>
-            &#x2022 <%=users[i].username%> <br>
-        <%}%>
+
+        <div class="parent-container">
+            <div class="container-send">
+            <%for(let i=0;i<users.length;i++){%>
+                <div class="item-send">
+                <div class="inner-item-send inner-item-send1" id="username"> <%=users[i].username%></div>
+                    <div class="inner-item-send inner-item-send2" > <a href="/delete-sent-request/<%=users[i].id%>">delete</a> </div>
+                    </div>
+             <%}%>
+            </div>
+        </div>
+
    <% }else{%>
         <%if(type==="pending-requests"){%>
         <h1>Pending Requests</h1>
-
+        <nav>
+            <a href="/posts">Home</a>
+        </nav>
+    <div class="parent-container">
+        <div class="container">
         <%for(let i=0;i<users.length;i++){%>
-            &#x2022 <%=users[i].username%> <a href="/accept-request/<%=users[i].id%>">Accept</a> <br>
+            <div class="item">
+            <div class="inner-item" id="username"> <%=users[i].username%></div>
+            <div class="inner2-item">
+                <div class="inner-item" id="accept"> <a href="/accept-request/<%=users[i].id%>">Accept</a> </div>
+                <div class="inner-item" id="delete">
+                    <a href="/delete-pending-request/<%=users[i].id%>">delete</a>
+                </div>
+            </div>
+
+            </div>
+            <hr>
          <%}%>
+        </div>
+    </div>
 
         <% }else{%>
            <% if(locals.chat){%>
@@ -27,14 +171,20 @@
            <% }else{%>
                 <h1>Friends</h1>
             <%}%>
-            
+            <div class="parent-container">
+                <div class="container-send">
             <%for(let i=0;i<users.length;i++){%>
-                &#x2022 <%=users[i].username%> <a href="/chats/<%=users[i].id%>">Chat</a> <br>
+                <div class="item-send">
+                    <div class="inner-item-send inner-item-send1" id="username"> <%=users[i].username%>
+                </div>
+                <div style="background-color: green;" class="inner-item-send inner-item-send2" ><a href="/chats/<%=users[i].id%>">Chat</a>
+                </div>
+                </div>
             <%}%>
+                </div>
+            </div>
        <% }%>
           <%  }%>
-          <br>
-          <a href="/posts">Home</a>
 
 </body>
 </html>

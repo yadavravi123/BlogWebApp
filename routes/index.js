@@ -68,8 +68,8 @@ const { connect } = require('mongoose');
 
 router.get('/', async(req, res, next) => {
 
-    res.send('<h1>Home</h1><p>Please <a href="/register">register</a> ,<a href="/register-admin">register as admin</a>,<a href="/login">login</a> </p>');
-   
+    // res.send('<h1>Home</h1><p>Please <a href="/register">register</a> ,<a href="/register-admin">register as admin</a>,<a href="/login">login</a> </p>');
+   res.render("Home.ejs");
     
 
 });
@@ -303,7 +303,7 @@ router.get("/accept-request/:id",isAuth, async(req,res)=>{
         console.log(ack);
        })
     })
-    res.redirect("/posts");
+    res.redirect("/pending-requests");
 })
 router.get("/friends",isAuth,async(req,res)=>{
         res.render("requests.ejs",{
@@ -315,6 +315,7 @@ router.get("/friends",isAuth,async(req,res)=>{
 router.get("/chats",isAuth, async(req,res)=>{
 
     // show old chats and then input field
+    let meSender=false;
     res.render("requests.ejs",{
         type:"friends",
         users:req.user.friends,
@@ -332,7 +333,8 @@ router.post("/send-chat/:id",isAuth,async(req,res)=>{
         id1=id2;
         id2=temp;
     }// id1 will contain lexicographically smaller id
-  
+    let meSender=false;
+
     User.findOne({_id:id1})
     .then((user1)=>{
         User.findOne({_id:id2})
@@ -378,7 +380,24 @@ router.get("/chats/:id",isAuth,async(req,res)=>{
         if(Chats){
             Chats=Chats.messages;
         }
-        res.render("chat_page.ejs",{id:req.params.id,Chats:Chats});
+        res.render("chat.ejs",{id:req.params.id,Chats:Chats});
 })
 
+router.get("/delete-pending-request/:id", async(req,res)=>{
+        const result1=await User.updateOne({_id:req.params.id},
+            {$pull:{"sent_req":{"id":req.user._id}}});
+        const result2=await User.updateOne({_id:req.user._id},{$pull:{"pending_req":{"id":req.params.id}}});
+        console.log(result1);
+        console.log(result2);
+        res.redirect("/pending-requests");
+})
+
+router.get("/delete-sent-request/:id",async(req,res)=>{
+    const ack1=await User.updateOne({_id:req.user._id},{
+        $pull:{"sent_req":{"id":req.params.id}}});
+    const ack2=await User.updateOne({_id:req.params.id},{$pull:{"pending_req":{"id":req.user._id}}});
+    console.log(ack1);
+    console.log(ack2);
+        res.redirect("/sent-requests");
+})
 module.exports = router;

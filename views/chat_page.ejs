@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
     <style>
-
+        body{
+            background-color: #E0F4FF;
+            color:black;
+        }
         .container{
-            background-color: #D2E0FB;
+            background-color: white;
             height: 70vh;
             display: flex;
-            flex-direction: column;
+            flex-direction: column-reverse;
             justify-content:flex-end;
             padding: 2rem;
             margin: 1rem 5rem;
@@ -23,7 +26,7 @@
         .chats{
             overflow-y: auto;
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column;
             margin:0.5rem 1rem;
         }
         button{
@@ -56,7 +59,6 @@
         <h1 style="text-align: center;">Chat</h1>
     <nav> <a href="/posts">Home</a> </nav>
     <div class="container">
-     
       <%  if(locals.Chats){ %>
         <div class="chats">
            <%for(let i=0;i<Chats.length;i++){%>

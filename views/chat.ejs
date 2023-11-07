@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body{
+            margin:0;
+            background-color: #363062;
+            color:black;
+        }
+        .container{
+            display: flex;
+            flex-direction: column;
+            padding:0 1rem;
+            background-color:white;
+            justify-content: flex-end;
+            border-radius: 10px;
+        }
+        .chats{
+
+        }
+        .text-box{
+
+        }
+        .parent-container{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            /* background-color: #B15EFF; */
+            height: 90vh;
+        }
+        .send-btn{
+            padding: 8px 0;
+            background-color: #3D30A2;
+            color:white;
+            font-size: 15px;
+            border-radius: 10px;
+            border: none;
+        }
+        .send-btn:hover{
+            opacity: 0.8;
+        }
+        .text-boxAndBtn{
+            display: flex;
+            flex-direction: column;
+            
+        }
+        .items{
+            margin: 6px 0;
+        }
+        h1{
+           
+        }
+        .pp{
+            display: flex;
+            flex-direction: column;
+        }
+        h1{
+            align-self: center;
+            /* padding: 0; */
+            margin: 7px 0;
+            
+        }
+        .heading{
+            text-align: center;
+            background-color: #363062;
+            color:white;
+        }
+        textarea{
+           padding: 10px;
+            /* font-style: oblique; */
+            /* font-family: Arial, Helvetica, sans-serif; */
+        }
+        .chat-div{
+            display: flex;
+            flex-direction: column-reverse;
+            overflow-y: auto;
+            padding: 0 0.7rem;;
+        }
+        
+        .chats{
+            padding:3px 0;
+            
+        }
+        .me-sender{
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="pp">
+    <div class="heading">    
+    <h1>Chats</h1>
+    </div>  
+    <div class="parent-container">
+        <div class="container">
+            <div class="chat-div items">
+               <% if(locals.Chats){%>
+                    <%for(let i=Chats.length-1;i>=0;i--){%>
+                   <% if(Chats[i].sender._id==id){%>
+                    <div class="chats">
+                        <%=Chats[i].time%> <br>
+                        <%=Chats[i].sender.username%> : <%=Chats[i].content%>
+                    </div>
+               <% }else{%>
+                    <div class="chats me-sender">
+                        <%=Chats[i].time%> <br>
+                        <%=Chats[i].sender.username%> : <%=Chats[i].content%>
+                    </div>
+                <%}%>
+            <%}%>
+        <%}%>
+            </div>
+            <!-- <div class="text-boxAndBtn items"> -->
+
+            <!-- <div class="text-box">
+                <textarea name="" id="" cols="80" rows="7">hello bro</textarea>
+            </div>
+                <button class="full-width send-btn" type="submit">send</button> -->
+                <form class="text-boxAndBtn items"  action="/send-chat/<%=id%>" method="post">
+                    <div class="text-box">
+                    <textarea name="chat_content" id="" cols="80" rows="7"></textarea>
+                </div>
+                    <button class="full-width send-btn" type="submit">send</button>
+                </form>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+</body>
+</html>
